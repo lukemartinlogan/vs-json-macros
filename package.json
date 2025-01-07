@@ -1,4 +1,5 @@
 {
+    "publisher": "lukemartinlogan",
     "name": "vs-json-macros",
     "displayName": "vs-json-macros",
     "description": "A tool for making json macros and combining multiple launch.yaml and task.jsons for better organization in vscode",
