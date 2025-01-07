@@ -1,0 +1,26 @@
+# VSCode Extension Project
+
+node_modules/
+dist/
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/keybindings.json
+.vscode/extensions/
+
+src/
+extensions/
+out-*
+*.map
+*.tsbuildinfo
+*.cache
+*.vscodeignore
+
+package-lock.json
+yarn.lock
+.vscodeignore
+
+# VSCode built-in files
+.vscode/variables.json
+.vscode/snippets/*
+.vscode/publish/*
