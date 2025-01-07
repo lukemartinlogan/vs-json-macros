@@ -8,6 +8,7 @@ dist/
 !.vscode/keybindings.json
 .vscode/extensions/
 
+/out
 *.vsix
 src/
 extensions/

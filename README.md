@@ -8,30 +8,30 @@ A tool to reduce code volume and repitition on launch.json and tasks.json for vs
 Imagine you have a launch.json that looks like this:
 ```json
 {
-  "version": "0.2.0",
-  "configurations": {
-    "test_shm_debug": {
-      "name": "test-local-serialize",
-      "type": "cppvsdbg",
-      "request": "launch",
-      "program": "${workspaceFolder}/build/bin/test_shm_exec.exe",
-      "args": "ScalablePageAllocatorMultithreaded",
-      "stopAtEntry": false,
-      "cwd": "${workspaceFolder}",
-      "environment": [],
-      "externalConsole": false
-    },
-    "test_data_debug": {
-      "name": "test-data-structures",
-      "type": "cppvsdbg",
-      "request": "launch",
-      "program": "${workspaceFolder}/build/bin/test_data_structure_exec.exe",
-      "args": "ScalablePageAllocatorMultithreaded",
-      "stopAtEntry": false,
-      "cwd": "${workspaceFolder}",
-      "environment": [],
-      "externalConsole": false
-    },
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "test-local-serialize",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/bin/test_shm_exec.exe",
+            "args": "ScalablePageAllocatorMultithreaded",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false
+        },
+        {
+            "name": "test-data-structures",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/bin/test_data_structure_exec.exe",
+            "args": "ScalablePageAllocatorMultithreaded",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false
+        },
 ```
 
 There's a lot of repition there. With vs-json-macros, you can have a YAML file that looks as follows:
@@ -52,16 +52,16 @@ macros:
       - description: Enable pretty-printing for gdb,
         text: -enable-pretty-printing,
         ignoreFailures: true
-test_shm_debug:
-  macro: debug
-  launch-name: test-local-serialize
-  program: test_shm_exec
-  args: ["SerializeHshm"]
-test_data_debug:
-  macro: debug
-  launch-name: test-data-structures
-  program: test_data_structure_exec
-  args: ["TestMpmcFifoListQueueIntMultithreaded"]
+version: 0.2.0
+configurations:
+  - macro: debug
+    launch-name: test-local-serialize
+    program: test_shm_exec
+    args: ["SerializeHshm"]
+  - macro: debug
+    launch-name: test-data-structures
+    program: test_data_structure_exec
+    args: ["TestMpmcFifoListQueueIntMultithreaded"]
 ```
 
 When you run "jsonify" in your developer prompt, it will convert this yaml file to the JSON one and save it as launch.json.
@@ -115,17 +115,16 @@ macros:
       - description: Enable pretty-printing for gdb,
         text: -enable-pretty-printing,
         ignoreFailures: true
-test_shm_debug:
-  macro: debug
-  launch-name: test-local-serialize
-  program: test_shm_exec
-  args: ["SerializeHshm"]
-test_data_debug:
-  macro: debug
-  launch-name: test-data-structures
-  program: test_data_structure_exec
-  args: ["TestMpmcFifoListQueueIntMultithreaded"]
-
+version: 0.2.0
+configurations:
+  - macro: debug
+    launch-name: test-local-serialize
+    program: test_shm_exec
+    args: ["SerializeHshm"]
+  - macro: debug
+    launch-name: test-data-structures
+    program: test_data_structure_exec
+    args: ["TestMpmcFifoListQueueIntMultithreaded"]
 ```
 
 Here the requirements section states that this yaml file is only for linux OSes.
