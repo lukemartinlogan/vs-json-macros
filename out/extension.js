@@ -56,22 +56,30 @@ function findConfigFiles(config, workspaceFolder) {
 function compileYamlToJson(config, workspaceFolder) {
     let output = {};
     let macros = {};
-    const files = findConfigFiles('launch', workspaceFolder);
+    const files = findConfigFiles(config, workspaceFolder);
+    if (files.length === 0) {
+        return;
+    }
     for (const file of files) {
         const content = fs.readFileSync(file, 'utf8');
         const data = yaml.load(content);
+        // Check if OS is Windows
+        const isWin = process.platform === 'win32';
+        // Check if requirements exist and match current OS
+        if (data && data.requirements && data.requirements.os) {
+            const targetOs = data.requirements.os;
+            if ((isWin && targetOs !== 'windows') || (!isWin && targetOs === 'windows')) {
+                continue;
+            }
+            delete data.requirements;
+        }
+        // Get macros section
         if (data.macros) {
             macros = { ...macros, ...data.macros };
             delete data.macros;
         }
-        for (const [key, value] of Object.entries(data)) {
-            if (typeof value === 'object' && value !== null && 'macro' in value) {
-                output[key] = parseMacro(macros[value.macro], value);
-            }
-            else {
-                output[key] = value;
-            }
-        }
+        // Concatenate descendMacro with output
+        output = { ...output, ...descendMacro(data, macros) };
     }
     const outputPath = path.join(path.dirname(files[0]), `${config}.json`);
     try {
@@ -80,6 +88,36 @@ function compileYamlToJson(config, workspaceFolder) {
     }
     catch (error) {
         console.error('Error writing JSON file:', error);
+    }
+}
+function descendMacro(data, macros) {
+    if (typeof data === 'object') {
+        let output = {};
+        for (const [key, value] of Object.entries(data)) {
+            if (typeof value === 'object' && value !== null && 'macro' in value) {
+                output[key] = parseMacro(macros[value.macro], value);
+            }
+            else {
+                output[key] = descendMacro(value, macros);
+            }
+        }
+        return output;
+    }
+    else if (Array.isArray(data)) {
+        let output = [];
+        output = data.map(item => {
+            if (typeof item === 'object' && item !== null && 'macro' in item) {
+                return parseMacro(macros[item.macro], item);
+            }
+            else {
+                return descendMacro(item, macros);
+            }
+            return item;
+        });
+        return output;
+    }
+    else {
+        return data;
     }
 }
 function parseMacro(macroDef, paramDict) {
@@ -118,21 +156,19 @@ function parseStringMacro(macroDef, paramDict) {
 function activate(context) {
     // Use the console to output diagnostic information (console.log) and errors (console.error)
     // This line of code will only be executed once when your extension is activated
-    console.log('Congratulations, your extension "vs-json-macros" is now active!');
-    const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-    if (!workspaceFolder) {
-        console.error('No workspace folder found');
-        return;
-    }
-    compileYamlToJson('launch', workspaceFolder);
-    compileYamlToJson('tasks', workspaceFolder);
+    console.log('Type yamls to json to recompile your vscode yamls into json!');
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with registerCommand
     // The commandId parameter must match the command field in package.json
-    const disposable = vscode.commands.registerCommand('vs-json-macros.helloWorld', () => {
+    const disposable = vscode.commands.registerCommand('vs-json-macros.jsonify', () => {
         // The code you place here will be executed every time your command is executed
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Hello World from vs-json-macros!');
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+        if (!workspaceFolder) {
+            console.error('No workspace folder found');
+            return;
+        }
+        compileYamlToJson('launch', workspaceFolder);
+        compileYamlToJson('tasks', workspaceFolder);
     });
     context.subscriptions.push(disposable);
 }

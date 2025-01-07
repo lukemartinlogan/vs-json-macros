@@ -14,8 +14,8 @@
     "contributes": {
         "commands": [
             {
-                "command": "vs-json-macros.helloWorld",
-                "title": "Hello World"
+                "command": "vs-json-macros.jsonify",
+                "title": "jsonify"
             }
         ]
     },
