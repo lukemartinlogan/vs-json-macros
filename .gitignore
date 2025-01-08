@@ -10,7 +10,6 @@ dist/
 
 /out
 *.vsix
-src/
 extensions/
 out-*
 *.map
