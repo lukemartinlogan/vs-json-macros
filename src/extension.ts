@@ -3,7 +3,9 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+// import * as yaml from 'js-yaml';
 const yaml = require('js-yaml');
+
 
 function findConfigFiles(config: string, workspaceFolder: string): string[] {
     const vscodeDir = path.join(workspaceFolder, '.vscode');
