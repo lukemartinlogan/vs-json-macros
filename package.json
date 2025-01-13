@@ -3,7 +3,7 @@
     "name": "vs-json-macros",
     "displayName": "vs-json-macros",
     "description": "A tool for making json macros and combining multiple launch.yaml and task.jsons for better organization in vscode",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "engines": {
         "vscode": "^1.96.0"
     },

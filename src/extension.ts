@@ -120,16 +120,17 @@ function parseListMacro(macroDef: any[], paramDict: any): any[] {
 }
 
 function parseStringMacro(macroDef: string, paramDict: any): any {
-  let result = macroDef;
+  var result = macroDef;
   for (const [key, value] of Object.entries(paramDict)) {
     if (key !== 'macro') {
-      result = result.replace(
-          new RegExp(`\\$\\(${key}\\)`, 'g'), JSON.stringify(value));
+      if (result.includes(`$(${key})`)) {
+        if (typeof value == 'string') {
+          result = result.replace(new RegExp(`\\$\\(${key}\\)`, 'g'), value);
+        } else {
+          return value;
+        }
+      }
     }
-  }
-  try {
-    result = JSON.parse(result);
-  } catch (error) {
   }
   return result;
 }
