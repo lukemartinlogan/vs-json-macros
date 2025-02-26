@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 const yaml = require('js-yaml');
 
+// List the set of files in .vscode
 function findConfigFiles(config: string, workspaceFolder: string): string[] {
   const vscodeDir = path.join(workspaceFolder, '.vscode');
 
@@ -18,6 +19,8 @@ function findConfigFiles(config: string, workspaceFolder: string): string[] {
   }
 }
 
+// Convert the YAML file to json
+// @param config: the prefix of the yaml file
 function compileYamlToJson(config: string, workspaceFolder: string): any {
   let output: any = {};
   let macros: any = {};
@@ -61,6 +64,7 @@ function compileYamlToJson(config: string, workspaceFolder: string): any {
   }
 }
 
+// Recursively descend through the yaml file
 function descendMacro(data: any, macros: any): any {
   if (typeof data === 'string') {
     return data;
@@ -90,8 +94,9 @@ function descendMacro(data: any, macros: any): any {
   }
 }
 
+// Parse the macros in the YAML file
 function parseMacro(macroDef: any, paramDict: any): any {
-  if (typeof macroDef === 'string') {
+  if (typeof macroDef === 'string' || typeof macroDef === 'number') {
     return parseStringMacro(macroDef, paramDict);
   } else if (Array.isArray(macroDef)) {
     return parseListMacro(macroDef, paramDict);
@@ -119,12 +124,12 @@ function parseListMacro(macroDef: any[], paramDict: any): any[] {
   return output;
 }
 
-function parseStringMacro(macroDef: string, paramDict: any): any {
+function parseStringMacro(macroDef: any, paramDict: any): any {
   var result = macroDef;
   for (const [key, value] of Object.entries(paramDict)) {
     if (key !== 'macro') {
       if (result.includes(`$(${key})`)) {
-        if (typeof value == 'string') {
+        if (typeof value === 'string' || typeof value === 'number') {
           result = result.replace(new RegExp(`\\$\\(${key}\\)`, 'g'), value);
         } else {
           return value;

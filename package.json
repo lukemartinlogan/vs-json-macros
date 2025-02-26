@@ -2,7 +2,7 @@
     "publisher": "lukemartinlogan",
     "name": "vs-json-macros",
     "displayName": "vs-json-macros",
-    "description": "A tool for making json macros and combining multiple launch.yaml and task.jsons for better organization in vscode",
+    "description": "A tool to reduce code volume and repitition on launch.json and tasks.json for vscode using macros in a YAML format.",
     "version": "0.0.6",
     "engines": {
         "vscode": "^1.96.0"
